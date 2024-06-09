@@ -1,5 +1,23 @@
 services:
   finance-service:
-    build: app
+    build: ./app
+    volumes:
+      - "./config:/config"
     ports:
-    - "5000:5000"
+      - "5000:5000"
+    networks:
+      - backend
+
+  db:
+    image: postgres:latest
+    volumes:
+      - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
+    environment:
+      - POSTGRES_DB=finances
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password  # Change this to match your actual password
+    networks:
+      - backend
+
+networks:
+  backend:
