@@ -12,12 +12,16 @@ services:
     image: postgres:latest
     volumes:
       - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "db-volume:/var/lib/postgres"
     environment:
       - POSTGRES_DB=finances
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=password  # Change this to match your actual password
     networks:
       - backend
+
+volumes:
+  db-volume:
 
 networks:
   backend:

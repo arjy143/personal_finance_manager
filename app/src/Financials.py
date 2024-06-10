@@ -3,7 +3,7 @@ from db import db
 class Budget(db.Model):
     __tablename__ = 'budgets'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Numeric(14, 2), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
@@ -44,7 +44,7 @@ class Budget(db.Model):
 class Transaction(db.Model):
     __tablename__ = 'transactions'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     description = db.Column(db.String(255), nullable=False)
     amount = db.Column(db.Numeric(14, 2), nullable=False)
     category = db.Column(db.String(50))
@@ -79,5 +79,5 @@ class Transaction(db.Model):
             "description" : self.description,
             "amount" : float(self.amount),
             "category" : self.category,
-            "date" : str(self.date)
+            "date" : str(self.date.strftime('%Y-%m-%d'))
         }

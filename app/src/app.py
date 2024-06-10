@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from db import db
 from sqlalchemy import exc
+from datetime import datetime
 from Financials import Budget, Transaction
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://root:password@db/finances'
@@ -20,20 +21,27 @@ def get_transaction(id):
     transaction = Transaction.find_by_id(id)
     return jsonify(transaction.json)
 
-# curl --header "Content-Type: application/json" --request POST --data '{"description": "Product 3", "amount": 2.41, "category": "Household", "date": "4/6/2024"}' -v http://localhost:5000/transaction
+#curl --header "Content-Type: application/json" --request POST --data "{\"description\": \"kebabs\", \"amount\": 10.96, \"category\": \"Takeaway\", \"date\": \"2024-06-05\"}" http://localhost:5000/transaction
+# curl --header "Content-Type: application/json" --request POST --data "{\"description\": \"Product 3\", \"amount\": 2.41, \"category\": \"Household\", \"date\": \"2024-06-04\"}" http://localhost:5000/transaction
 @app.route('/transaction', methods=['POST'])
 def post_transaction():
     # Retrieve the product from the request body
     request_transaction = request.json
-    transaction = Transaction(None, request_transaction["description"], request_transaction["amount"], request_transaction["category"],date = datetime.strptime(request_transaction["date"], '%Y-%m-%d').date())
+    transaction = Transaction(
+        request_transaction["description"], 
+        request_transaction["amount"], 
+        request_transaction["category"],
+        datetime.strptime(request_transaction["date"], '%Y-%m-%d').date()
+    )
     try:
     # Save the Product to the database
         transaction.save_to_db()
         # Return the jsonified Product
         return jsonify(transaction.json), 201
-    except exc.SQLAlchemyError:
-        return f'An exception occurred while creating transaction with description: {transaction.description}', 500
+    except Exception as e:
+        return f'An exception {e} occurred while creating transaction with description: {transaction.description}', 500
 
+#curl --header "Content-Type: application/json" --request PUT --data "{\"description\": \"Chinese\", \"amount\": 10.49, \"category\": \"Takeaway\", \"date\": \"2024-06-05\"}" http://localhost:5000/transaction/2
 @app.route('/transaction/<int:id>', methods=['PUT'])
 def put_transaction(id):
     try:
