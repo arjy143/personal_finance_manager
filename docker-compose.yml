@@ -12,11 +12,11 @@ services:
     image: postgres:latest
     volumes:
       - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
-      - "db-volume:/var/lib/postgres"
+      - "db-volume:/var/lib/postgresql/data"
     environment:
       - POSTGRES_DB=finances
       - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=password  # Change this to match your actual password
+      - POSTGRES_PASSWORD=password
     networks:
       - backend
 
